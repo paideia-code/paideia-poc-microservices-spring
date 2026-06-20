@@ -1,0 +1,4 @@
+name: paideia-poc-microservices-spring · Start all services (PowerShell)
+command: .\tools\scripts\local\start-services.ps1
+tags: ["paideia", "local", "service", "powershell"]
+description: Levanta todos los microservicios en background y guarda logs/PIDs.

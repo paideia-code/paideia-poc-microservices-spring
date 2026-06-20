@@ -1,0 +1,4 @@
+name: paideia-poc-microservices-spring · Stop all services (PowerShell)
+command: .\tools\scripts\local\stop-services.ps1
+tags: ["paideia", "local", "service", "powershell"]
+description: Detiene los microservicios iniciados por start-services.ps1.

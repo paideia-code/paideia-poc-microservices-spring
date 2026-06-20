@@ -1,0 +1,4 @@
+name: paideia-poc-microservices-spring · Down infra (PowerShell)
+command: .\tools\scripts\local\down-infra.ps1
+tags: ["paideia", "local", "infra", "powershell"]
+description: Detiene la infraestructura local de Docker Compose.

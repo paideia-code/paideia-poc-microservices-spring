@@ -1,0 +1,719 @@
+﻿{
+    "info":  {
+                 "name":  "Paideia POC - v1 Minimal",
+                 "description":  "Postman collection for v1/minimal. Infrastructure runs with Docker Compose; business services run on localhost ports 8081-8086.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "Health Checks",
+                     "description":  "Spring Actuator health endpoints for all v1 services.",
+                     "item":  [
+                                  {
+                                      "name":  "course-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "enrollment-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{enrollment_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{enrollment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "payment-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{payment_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{payment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "user-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{user_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{user_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "content-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{content_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{content_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "notification-service",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{notification_service_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{notification_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Course Service",
+                     "description":  "Course catalog. Source of truth for course price and publication status.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /courses",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/courses",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "courses"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "GET /courses/:id - published seed",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/courses/{{test_course_id}}",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "courses",
+                                                                               "{{test_course_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "GET /courses/:id - draft seed",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/courses/{{test_course_draft_id}}",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "courses",
+                                                                               "{{test_course_draft_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /courses - DRAFT",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/courses",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "courses"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"title\": \"QA Draft Course {{run_suffix}}\",\n  \"description\": \"Curso temporal creado desde Postman.\",\n  \"priceAmount\": 89.99,\n  \"status\": \"DRAFT\"\n}"
+                                                               }
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.environment.set(\"created_course_id\", json.id);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "name":  "POST /courses - validation error",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{course_service_url}}/courses",
+                                                                  "host":  [
+                                                                               "{{course_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "courses"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"title\": \"\",\n  \"description\": \"Invalid request: empty title and negative price.\",\n  \"priceAmount\": -10,\n  \"status\": null\n}"
+                                                               }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Enrollment Service",
+                     "description":  "Orchestrates enrollment: course validation, payment processing, notification, and content access check.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /enrollments/:id",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{enrollment_service_url}}/enrollments/{{test_enrollment_id}}",
+                                                                  "host":  [
+                                                                               "{{enrollment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "enrollments",
+                                                                               "{{test_enrollment_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /enrollments - ENROLLED",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{enrollment_service_url}}/enrollments",
+                                                                  "host":  [
+                                                                               "{{enrollment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "enrollments"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"courseId\": \"{{test_course_id}}\",\n  \"studentId\": \"{{test_student_id}}\",\n  \"currency\": \"USD\"\n}"
+                                                               }
+                                                  },
+                                      "description":  "Uses a PUBLISHED seed course with price below 10000.",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.environment.set(\"test_enrollment_id\", json.id);",
+                                                                                    "pm.environment.set(\"test_payment_id\", json.paymentId);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "name":  "POST /enrollments - course not published",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{enrollment_service_url}}/enrollments",
+                                                                  "host":  [
+                                                                               "{{enrollment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "enrollments"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"courseId\": \"{{test_course_draft_id}}\",\n  \"studentId\": \"{{test_student_id}}\",\n  \"currency\": \"USD\"\n}"
+                                                               }
+                                                  },
+                                      "description":  "Expected result: 409 conflict because the course is DRAFT."
+                                  },
+                                  {
+                                      "name":  "GET /enrollments/access",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{enrollment_service_url}}/enrollments/access?studentId={{test_student_id}}\u0026courseId={{test_course_id}}",
+                                                                  "host":  [
+                                                                               "{{enrollment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "enrollments",
+                                                                               "access"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "studentId",
+                                                                                    "value":  "{{test_student_id}}"
+                                                                                },
+                                                                                {
+                                                                                    "key":  "courseId",
+                                                                                    "value":  "{{test_course_id}}"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Payment Service",
+                     "description":  "Simulated payment processing. Amounts \u003e= 10000 are rejected.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /payments/:id",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{payment_service_url}}/payments/{{test_payment_id}}",
+                                                                  "host":  [
+                                                                               "{{payment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "payments",
+                                                                               "{{test_payment_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /payments - APPROVED",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{payment_service_url}}/payments",
+                                                                  "host":  [
+                                                                               "{{payment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "payments"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"amount\": 149.99,\n  \"currency\": \"USD\"\n}"
+                                                               }
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.environment.set(\"test_payment_id\", json.id);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "name":  "POST /payments - REJECTED",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{payment_service_url}}/payments",
+                                                                  "host":  [
+                                                                               "{{payment_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "payments"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"amount\": 15000,\n  \"currency\": \"USD\"\n}"
+                                                               }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "User Service",
+                     "description":  "Simple student registration and lookup.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /students/:id",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{user_service_url}}/students/{{test_student_id}}",
+                                                                  "host":  [
+                                                                               "{{user_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "students",
+                                                                               "{{test_student_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /students",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{user_service_url}}/students",
+                                                                  "host":  [
+                                                                               "{{user_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "students"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{test_user_email}}\",\n  \"name\": \"QA Student {{run_suffix}}\"\n}"
+                                                               }
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "prerequest",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "const suffix = Date.now();",
+                                                                                    "pm.environment.set(\"run_suffix\", suffix);",
+                                                                                    "pm.environment.set(\"test_user_email\", `qa-student-${suffix}@paideia.io`);"
+                                                                                ]
+                                                                   }
+                                                    },
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.environment.set(\"test_student_id\", json.id);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Content Service",
+                     "description":  "Content records and purchased-content access.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /contents - purchased",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "X-Student-Id",
+                                                                         "value":  "{{test_student_id}}"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{content_service_url}}/contents?courseId={{test_course_id}}",
+                                                                  "host":  [
+                                                                               "{{content_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "contents"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "courseId",
+                                                                                    "value":  "{{test_course_id}}"
+                                                                                }
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /contents",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{content_service_url}}/contents",
+                                                                  "host":  [
+                                                                               "{{content_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "contents"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "courseId",
+                                                                                        "value":  "{{test_course_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "description",
+                                                                                        "value":  "Material introductorio del curso.",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "metadata",
+                                                                                        "value":  "{\"kind\":\"syllabus\",\"pages\":12}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "file",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "if (json.id) pm.environment.set(\"test_content_id\", json.id);",
+                                                                                    ""
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Notification Service",
+                     "description":  "Persists notification requests. In v4 this becomes a Kafka consumer.",
+                     "item":  [
+                                  {
+                                      "name":  "GET /notifications/:id",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{notification_service_url}}/notifications/{{test_notification_id}}",
+                                                                  "host":  [
+                                                                               "{{notification_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "notifications",
+                                                                               "{{test_notification_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "POST /notifications",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{notification_service_url}}/notifications",
+                                                                  "host":  [
+                                                                               "{{notification_service_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "notifications"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"recipientId\": \"{{test_student_id}}\",\n  \"type\": \"ENROLLMENT_CONFIRMED\",\n  \"subject\": \"Inscripcion confirmada\",\n  \"body\": \"Te has inscrito correctamente en el curso.\"\n}"
+                                                               }
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\"response is successful\", function () {",
+                                                                                    "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.environment.set(\"test_notification_id\", json.id);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 }
+             ],
+    "variable":  [
+
+                 ],
+    "event":  [
+                  {
+                      "listen":  "prerequest",
+                      "script":  {
+                                     "type":  "text/javascript",
+                                     "exec":  [
+                                                  "if (!pm.environment.get(\"run_suffix\") || pm.environment.get(\"run_suffix\") === \"local\") {",
+                                                  "  pm.environment.set(\"run_suffix\", Date.now());",
+                                                  "}"
+                                              ]
+                                 }
+                  }
+              ]
+}

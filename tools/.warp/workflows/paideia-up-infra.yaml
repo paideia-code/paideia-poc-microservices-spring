@@ -1,0 +1,4 @@
+name: paideia-poc-microservices-spring · Up infra (PowerShell)
+command: .\tools\scripts\local\up-infra.ps1
+tags: ["paideia", "local", "infra", "powershell"]
+description: Levanta la infraestructura local con Docker Compose.
