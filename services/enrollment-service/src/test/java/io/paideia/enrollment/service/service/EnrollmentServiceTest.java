@@ -66,7 +66,7 @@ class EnrollmentServiceTest {
     @Test
     void enrollConfirmsEnrollmentAndNotifiesWhenPaymentIsApproved() {
         givenPublishedCourse();
-        when(enrollmentRepository.existsByCourseIdAndStudentId(COURSE_ID, STUDENT_ID)).thenReturn(false);
+        when(enrollmentRepository.existsByCourseIdAndStudentIdAndStatus(COURSE_ID, STUDENT_ID, EnrollmentStatus.ENROLLED)).thenReturn(false);
         when(paymentClient.process(any(PaymentClientRequestDTO.class), eq("APPROVED")))
                 .thenReturn(new PaymentClientResponseDTO(PAYMENT_ID, new BigDecimal("79.99"), "APPROVED"));
         when(enrollmentRepository.save(any(EnrollmentEntity.class))).thenAnswer(invocation -> {
@@ -86,7 +86,7 @@ class EnrollmentServiceTest {
     @Test
     void enrollRejectsEnrollmentAndNotifiesWhenPaymentIsRejected() {
         givenPublishedCourse();
-        when(enrollmentRepository.existsByCourseIdAndStudentId(COURSE_ID, STUDENT_ID)).thenReturn(false);
+        when(enrollmentRepository.existsByCourseIdAndStudentIdAndStatus(COURSE_ID, STUDENT_ID, EnrollmentStatus.REJECTED)).thenReturn(false);
         when(paymentClient.process(any(PaymentClientRequestDTO.class), eq("REJECTED")))
                 .thenReturn(new PaymentClientResponseDTO(PAYMENT_ID, new BigDecimal("10000.00"), "REJECTED"));
         when(enrollmentRepository.save(any(EnrollmentEntity.class))).thenAnswer(invocation -> {
@@ -118,7 +118,7 @@ class EnrollmentServiceTest {
         when(enrollmentRepository.existsByCourseIdAndStudentIdAndStatus(
                 COURSE_ID, STUDENT_ID, EnrollmentStatus.ENROLLED)).thenReturn(true);
 
-        var response = enrollmentService.canAccessContent(STUDENT_ID, COURSE_ID);
+        var response = enrollmentService.access(STUDENT_ID, COURSE_ID);
 
         assertThat(response.accessAllowed()).isTrue();
     }

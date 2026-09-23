@@ -115,7 +115,6 @@ class ContentServiceTest {
     @Test
     void findPurchasedCourseContentsReturnsContentsWhenStudentIsEnrolled() {
         UUID courseId = UUID.fromString("11111111-0000-0000-0000-000000000001");
-        UUID studentId = UUID.fromString("33333333-0000-0000-0000-000000000001");
         var content = ContentEntity.builder()
                 .id(UUID.fromString("22222222-0000-0000-0000-000000000001"))
                 .courseId(courseId)
@@ -128,10 +127,10 @@ class ContentServiceTest {
                 .createdAt(Instant.parse("2026-01-01T00:00:00Z"))
                 .build();
 
-        when(enrollmentAccessClient.canAccessContent(studentId, courseId)).thenReturn(true);
+        when(enrollmentAccessClient.canAccessContent(courseId)).thenReturn(true);
         when(contentRepository.findByCourseId(courseId)).thenReturn(List.of(content));
 
-        var response = contentService.findPurchasedCourseContents(courseId, studentId);
+        var response = contentService.findPurchasedCourseContents(courseId);
 
         assertThat(response).hasSize(1);
         assertThat(response.getFirst().filename()).isEqualTo("intro.pdf");
@@ -141,11 +140,10 @@ class ContentServiceTest {
     @Test
     void findPurchasedCourseContentsRejectsStudentWithoutEnrollment() {
         UUID courseId = UUID.fromString("11111111-0000-0000-0000-000000000001");
-        UUID studentId = UUID.fromString("33333333-0000-0000-0000-000000000001");
 
-        when(enrollmentAccessClient.canAccessContent(studentId, courseId)).thenReturn(false);
+        when(enrollmentAccessClient.canAccessContent(courseId)).thenReturn(false);
 
-        assertThatThrownBy(() -> contentService.findPurchasedCourseContents(courseId, studentId))
+        assertThatThrownBy(() -> contentService.findPurchasedCourseContents(courseId))
                 .isInstanceOf(ContentAccessDeniedException.class);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import io.paideia.user.service.exception.custom.UserEmailConflictException;
 import io.paideia.user.service.exception.custom.UserNotFoundException;
 import io.paideia.user.service.exception.handler.ErrorResponseDTO.FieldErrorDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +22,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleNotFound(UserNotFoundException ex, WebRequest request) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
-    }
-
-    @ExceptionHandler(UserEmailConflictException.class)
-    public ResponseEntity<ErrorResponseDTO> handleConflict(UserEmailConflictException ex, WebRequest request) {
-        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -45,22 +39,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex, WebRequest request) {
-        log.error("Unexpected error", ex);
+        log.error("event=user.unexpected_error path={}", getPath(request), ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request);
     }
 
     private ResponseEntity<ErrorResponseDTO> build(HttpStatus status, String message, WebRequest request) {
         return ResponseEntity.status(status).body(new ErrorResponseDTO(
-                Instant.now(), status.value(), status.getReasonPhrase(), message, path(request)));
+                Instant.now(), status.value(), status.getReasonPhrase(), message, getPath(request)));
     }
 
     private ResponseEntity<ErrorResponseDTO> build(
             HttpStatus status, String message, WebRequest request, List<FieldErrorDTO> fieldErrors) {
         return ResponseEntity.status(status).body(new ErrorResponseDTO(
-                Instant.now(), status.value(), status.getReasonPhrase(), message, path(request), fieldErrors));
+                Instant.now(), status.value(), status.getReasonPhrase(), message, getPath(request), fieldErrors));
     }
 
-    private String path(WebRequest request) {
+    private String getPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
     }
 }

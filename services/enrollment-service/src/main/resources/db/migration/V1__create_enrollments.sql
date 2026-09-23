@@ -6,15 +6,18 @@ CREATE TABLE enrollments (
     status VARCHAR(30) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    CONSTRAINT enrollments_student_course_unique UNIQUE (student_id, course_id),
+
+
     CONSTRAINT enrollments_status_check CHECK (
-        status IN (
-            'REQUESTED',
-            'PAYMENT_PENDING',
-            'ENROLLED',
-            'REJECTED',
+            status IN (
+                'REQUESTED',
+                'PAYMENT_PENDING',
+                'ENROLLED',
+                'REJECTED'
+            )
         )
-    )
-);
+    );
+
+CREATE UNIQUE INDEX idx_enrollments_student_course_enrolled ON enrollments (student_id, course_id) WHERE status = 'ENROLLED';
 
 CREATE INDEX idx_enrollments_course_id ON enrollments (course_id);

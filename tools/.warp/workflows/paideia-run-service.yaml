@@ -1,8 +1,0 @@
-name: paideia-poc-microservices-spring · Run service (PowerShell)
-command: .\tools\scripts\local\run-service.ps1 -Service {{service}}
-tags: ["paideia", "local", "service", "powershell"]
-description: Ejecuta un microservicio en foreground usando Maven Wrapper.
-arguments:
-  - name: service
-    description: Nombre del servicio (course-service, enrollment-service, payment-service, user-service, content-service, notification-service, certificate-service)
-    default_value: course-service

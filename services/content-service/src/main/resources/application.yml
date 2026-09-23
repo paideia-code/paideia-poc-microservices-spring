@@ -1,32 +1,5 @@
 spring:
   application:
     name: content-service
-  servlet:
-    multipart:
-      max-file-size: ${CONTENT_MAX_FILE_SIZE:5MB}
-      max-request-size: ${CONTENT_MAX_REQUEST_SIZE:6MB}
-  mongodb:
-    uri: ${CONTENT_MONGODB_URI:mongodb://localhost:27017/content}
-    representation:
-      uuid: standard
-
-server:
-  port: ${CONTENT_SERVICE_PORT:8085}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: when-authorized
-
-paideia:
-  seed:
-    content:
-      enabled: ${CONTENT_SEED_ENABLED:true}
-
-clients:
-  enrollment-service:
-    url: ${ENROLLMENT_SERVICE_URL:http://localhost:8082}
+  config:
+    import: optional:configserver:http://localhost:8888

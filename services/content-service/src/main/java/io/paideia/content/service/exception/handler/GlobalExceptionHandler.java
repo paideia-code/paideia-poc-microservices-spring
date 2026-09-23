@@ -50,38 +50,33 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<ErrorResponseDTO> handleMissingRequestHeader(
-            MissingRequestHeaderException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleMissingRequestHeader(MissingRequestHeaderException ex, WebRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Missing required header: " + ex.getHeaderName(), request);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponseDTO> handleMissingRequestParameter(
-            MissingServletRequestParameterException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleMissingRequestParameter(MissingServletRequestParameterException ex, WebRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Missing required parameter: " + ex.getParameterName(), request);
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<ErrorResponseDTO> handleMissingRequestPart(
-            MissingServletRequestPartException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleMissingRequestPart(MissingServletRequestPartException ex, WebRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Missing required multipart part: " + ex.getRequestPartName(), request);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ErrorResponseDTO> handleMaxUploadSizeExceeded(
-            MaxUploadSizeExceededException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
         return build(HttpStatus.valueOf(422), "Content file exceeds 5 MB limit", request);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponseDTO> handleTypeMismatch(
-            MethodArgumentTypeMismatchException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Invalid request value: " + ex.getName(), request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex, WebRequest request) {
-        log.error("Unexpected error", ex);
+        log.error("event=content.unexpected_error path={}", path(request), ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request);
     }
 

@@ -1,4 +1,0 @@
-name: paideia-poc-microservices-spring · Health checks (PowerShell)
-command: .\tools\scripts\local\health.ps1
-tags: ["paideia", "local", "health", "powershell"]
-description: Consulta /actuator/health de todos los microservicios y muestra estado.

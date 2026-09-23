@@ -17,10 +17,7 @@ import io.paideia.content.service.model.repository.ContentRepository;
 public class ContentSeedConfig {
 
     @Bean
-    @ConditionalOnProperty(
-            name = "paideia.seed.content.enabled",
-            havingValue = "true",
-            matchIfMissing = true)
+    @ConditionalOnProperty(name = "paideia.seed.content.enabled", havingValue = "true", matchIfMissing = true)
     ApplicationRunner seedContents(ContentRepository repository) {
         return args -> {
             if (repository.count() > 0) {

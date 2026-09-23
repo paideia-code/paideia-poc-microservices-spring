@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class ContentAccessDeniedException extends RuntimeException {
 
-    public ContentAccessDeniedException(UUID studentId, UUID courseId) {
-        super("Student " + studentId + " has no purchased access to course " + courseId);
+    public ContentAccessDeniedException(UUID courseId) {
+        super("Student has no purchased access to course " + courseId);
     }
 }

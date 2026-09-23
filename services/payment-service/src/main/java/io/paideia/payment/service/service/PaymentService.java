@@ -15,8 +15,10 @@ import io.paideia.payment.service.exception.custom.PaymentNotFoundException;
 import io.paideia.payment.service.model.entity.PaymentEntity;
 import io.paideia.payment.service.model.repository.PaymentRepository;
 import io.paideia.payment.service.service.mapper.PaymentMapper;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
@@ -42,11 +44,11 @@ public class PaymentService {
     @Transactional
     public PaymentResponseDTO process(PaymentRequestDTO dto, String paymentSimulation) {
         PaymentStatus status = resolveStatus(paymentSimulation);
-        String failureReason = status == PaymentStatus.REJECTED
-                ? "Payment rejected by local simulation"
-                : null;
+        String failureReason = status == PaymentStatus.REJECTED ? "PAYMENT_SIMULATION_REJECTED" : null;
 
         PaymentEntity saved = paymentRepository.save(paymentMapper.toEntity(dto, status, failureReason));
+        log.info("event=payment.processed paymentId={} status={} failureReason={}", saved.getId(), saved.getStatus(), failureReason);
+
         return paymentMapper.toResponse(saved);
     }
 

@@ -32,7 +32,6 @@ public class AccessPurchasedContentStepDefinitions {
     private List<ContentResponseDTO> responses;
     private Exception error;
     private UUID courseId;
-    private UUID studentId;
 
     @Before
     public void setUp() {
@@ -42,24 +41,19 @@ public class AccessPurchasedContentStepDefinitions {
         responses = null;
         error = null;
         courseId = null;
-        studentId = null;
     }
 
-    @Given("existe un estudiante registrado")
-    public void existeUnEstudianteRegistrado() {
-        studentId = STUDENT_ID;
-    }
-
+   
     @Given("el estudiante tiene una inscripción {string} en el curso")
     public void elEstudianteTieneUnaInscripcionEnElCurso(String status) {
         courseId = COURSE_ID;
-        when(enrollmentAccessClient.canAccessContent(studentId, courseId)).thenReturn("ENROLLED".equals(status));
+        when(enrollmentAccessClient.canAccessContent(courseId)).thenReturn("ENROLLED".equals(status));
     }
 
     @Given("el estudiante no tiene una inscripción {string} en el curso")
     public void elEstudianteNoTieneUnaInscripcionEnElCurso(String status) {
         courseId = COURSE_ID;
-        when(enrollmentAccessClient.canAccessContent(studentId, courseId)).thenReturn(false);
+        when(enrollmentAccessClient.canAccessContent(courseId)).thenReturn(false);
     }
 
     @Given("el curso tiene materiales registrados")
@@ -82,13 +76,12 @@ public class AccessPurchasedContentStepDefinitions {
     @Given("el header {string} identifica al estudiante")
     public void elHeaderIdentificaAlEstudiante(String headerName) {
         assertThat(headerName).isEqualTo("X-Student-Id");
-        assertThat(studentId).isNotNull();
     }
 
     @When("el estudiante consulta el contenido del curso")
     public void elEstudianteConsultaElContenidoDelCurso() {
         try {
-            responses = contentService.findPurchasedCourseContents(courseId, studentId);
+            responses = contentService.findPurchasedCourseContents(courseId);
         } catch (Exception ex) {
             error = ex;
         }

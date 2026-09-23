@@ -44,6 +44,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.valueOf(422), "Validation failed", request, fieldErrors);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
+        log.warn("event=course.request.invalid reason={}", ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDTO> handleUnreadable(HttpMessageNotReadableException ex, WebRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Malformed or unreadable request body", request);
@@ -53,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex, WebRequest request) {
-        log.error("Unexpected error", ex);
+        log.error("event=course.unexpected_error path={}", getPath(request), ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request);
     }
 

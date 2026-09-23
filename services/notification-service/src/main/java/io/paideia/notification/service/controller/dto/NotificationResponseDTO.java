@@ -7,7 +7,8 @@ import io.paideia.notification.service.enums.NotificationStatus;
 
 public record NotificationResponseDTO(
         UUID id,
-        UUID recipientId,
+        UUID studentId,
+        String email,
         String type,
         String subject,
         String body,

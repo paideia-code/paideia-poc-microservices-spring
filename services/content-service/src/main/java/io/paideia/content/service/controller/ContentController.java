@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.paideia.content.service.controller.dto.ContentResponseDTO;
 import io.paideia.content.service.exception.custom.InvalidContentUploadException;
+import io.paideia.content.service.model.entity.ContentEntity;
 import io.paideia.content.service.service.ContentService;
 import io.paideia.content.service.service.ContentUploadCommand;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,6 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class ContentController {
 
-    private static final String STUDENT_ID_HEADER = "X-Student-Id";
     private static final TypeReference<Map<String, Object>> METADATA_TYPE = new TypeReference<>() {};
 
     private final ContentService contentService;
@@ -43,7 +44,6 @@ public class ContentController {
         ContentResponseDTO response = contentService.create(toCommand(courseId, description, metadata, file));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(location).body(response);
-
     }
 
     private ContentUploadCommand toCommand(UUID courseId, String description, String metadata, MultipartFile file) {
@@ -87,7 +87,16 @@ public class ContentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ContentResponseDTO>> findPurchasedCourseContents(@RequestParam UUID courseId, @RequestHeader(STUDENT_ID_HEADER) UUID studentId) {
-        return ResponseEntity.ok(contentService.findPurchasedCourseContents(courseId, studentId));
+    public ResponseEntity<List<ContentResponseDTO>> findPurchasedCourseContents(@RequestParam UUID courseId) {
+        return ResponseEntity.ok(contentService.findPurchasedCourseContents(courseId));
+    }
+
+    @GetMapping("/{id}/file")
+    public ResponseEntity<byte[]> download(@PathVariable UUID id) {
+        ContentEntity content = contentService.findDownloadable(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(content.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + content.getFilename() + "\"")
+                .body(content.getFileBytes());
     }
 }

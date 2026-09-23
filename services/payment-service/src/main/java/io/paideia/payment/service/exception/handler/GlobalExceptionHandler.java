@@ -16,8 +16,8 @@ import io.paideia.payment.service.exception.custom.PaymentNotFoundException;
 import io.paideia.payment.service.exception.handler.ErrorResponseDTO.FieldErrorDTO;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PaymentNotFoundException.class)
@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidPaymentSimulationException.class)
-    public ResponseEntity<ErrorResponseDTO> handleInvalidPaymentSimulation(
-            InvalidPaymentSimulationException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleInvalidPaymentSimulation(InvalidPaymentSimulationException ex, WebRequest request) {
+        log.warn("event=payment.simulation.invalid path={}", getPath(request));
         return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request);
     }
 

@@ -1,5 +1,6 @@
 package io.paideia.enrollment.service.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -44,30 +45,37 @@ public class EnrollmentService {
     }
 
     @Transactional(readOnly = true)
-    public EnrollmentAccessResponseDTO canAccessContent(UUID studentId, UUID courseId) {
+    public EnrollmentAccessResponseDTO access(UUID studentId, UUID courseId) {
         boolean accessAllowed = enrollmentRepository.existsByCourseIdAndStudentIdAndStatus(
                 courseId, studentId, EnrollmentStatus.ENROLLED);
         return new EnrollmentAccessResponseDTO(studentId, courseId, accessAllowed);
     }
 
+    @Transactional(readOnly = true)
+    public List<EnrollmentResponseDTO> me(UUID studentId) {
+        return enrollmentMapper.toResponse(enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.ENROLLED));
+    }
+
     @Transactional
     public EnrollmentResponseDTO enroll(UUID studentId, String paymentSimulation, EnrollmentRequestDTO dto) {
+        /* Preconditions */
         CourseClientDTO course = courseClient.findById(dto.courseId());
         if (!"PUBLISHED".equals(course.status())) {
-            throw new CourseNotAvailableException(dto.courseId(),
-                    "Course status is " + course.status() + ", expected PUBLISHED");
+            log.warn("event=enrollment.course.unavailable courseId={} status={}", dto.courseId(), course.status());
+            throw new CourseNotAvailableException(dto.courseId(), "Course status is " + course.status() + ", expected PUBLISHED");
         }
 
-        if (enrollmentRepository.existsByCourseIdAndStudentId(dto.courseId(), studentId)) {
+        if (enrollmentRepository.existsByCourseIdAndStudentIdAndStatus(dto.courseId(), studentId, EnrollmentStatus.ENROLLED)) {
+            log.warn("event=enrollment.duplicate courseId={} studentId={}", dto.courseId(), studentId);
             throw new EnrollmentAlreadyExistsException(dto.courseId(), studentId);
         }
 
-        PaymentClientResponseDTO payment = paymentClient.process(
-                new PaymentClientRequestDTO(course.price()), paymentSimulation);
+        /* Payments */
+        PaymentClientResponseDTO payment = paymentClient.process(new PaymentClientRequestDTO(course.price()), paymentSimulation);
+        log.info("event=enrollment.payment.processed courseId={} studentId={} paymentId={} paymentStatus={}", dto.courseId(), studentId, payment.id(), payment.status());
 
-        EnrollmentStatus status = "APPROVED".equals(payment.status())
-                ? EnrollmentStatus.ENROLLED
-                : EnrollmentStatus.REJECTED;
+        /* Enrollments persistence */
+        EnrollmentStatus status = "APPROVED".equals(payment.status()) ? EnrollmentStatus.ENROLLED : EnrollmentStatus.REJECTED;
 
         EnrollmentEntity saved = enrollmentRepository.save(EnrollmentEntity.builder()
                 .courseId(dto.courseId())
@@ -76,17 +84,12 @@ public class EnrollmentService {
                 .paymentId(payment.id())
                 .build());
 
-        try {
-            String notifType = status == EnrollmentStatus.ENROLLED
-                    ? "ENROLLMENT_CONFIRMED" : "ENROLLMENT_REJECTED";
-            String notifSubject = status == EnrollmentStatus.ENROLLED
-                    ? "Inscripcion confirmada" : "Inscripcion rechazada";
-            notificationClient.notify(new NotificationClientRequestDTO(
-                    studentId, notifType, notifSubject,
-                    "Tu inscripcion en el curso " + dto.courseId() + " fue procesada."));
-        } catch (Exception ex) {
-            log.warn("notification-service call failed (best-effort): {}", ex.getMessage());
-        }
+        log.info("event=enrollment.created enrollmentId={} courseId={} studentId={} status={} paymentId={}", saved.getId(), saved.getCourseId(), saved.getStudentId(), saved.getStatus(), saved.getPaymentId());
+
+        /* Notifications */
+        String notifType = status == EnrollmentStatus.ENROLLED ? "ENROLLMENT_CONFIRMED" : "ENROLLMENT_REJECTED";
+        String notifSubject = status == EnrollmentStatus.ENROLLED ? "Inscripcion confirmada" : "Inscripcion rechazada";
+        notificationClient.notify(new NotificationClientRequestDTO(notifType, notifSubject, "Tu inscripcion en el curso " + course.title() + " fue procesada."));
 
         return enrollmentMapper.toResponse(saved);
     }

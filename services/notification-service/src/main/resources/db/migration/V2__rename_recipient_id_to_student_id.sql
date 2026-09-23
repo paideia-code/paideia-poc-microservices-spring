@@ -1,0 +1,2 @@
+ALTER TABLE notifications RENAME COLUMN recipient_id TO student_id;
+ALTER INDEX idx_notifications_recipient_id RENAME TO idx_notifications_student_id;

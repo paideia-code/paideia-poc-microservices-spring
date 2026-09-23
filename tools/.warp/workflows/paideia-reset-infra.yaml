@@ -1,4 +1,0 @@
-name: paideia-poc-microservices-spring · Reset infra (PowerShell)
-command: .\tools\scripts\local\reset-infra.ps1
-tags: ["paideia", "local", "infra", "reset", "powershell"]
-description: Reinicia infraestructura y volúmenes; pedirá confirmación en consola.

@@ -31,8 +31,11 @@ public class NotificationEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "recipient_id", nullable = false)
-    private UUID recipientId;
+    @Column(name = "student_id", nullable = false)
+    private UUID studentId;
+
+    @Column(name = "email", nullable = false, length = 255)
+    private String email;
 
     @Column(name = "type", nullable = false, length = 50)
     private String type;

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import io.paideia.course.service.controller.dto.CourseRequestDTO;
 import io.paideia.course.service.enums.CourseStatus;
@@ -103,5 +107,38 @@ class CourseServiceTest {
 
         assertThatThrownBy(() -> courseService.findById(courseId))
                 .isInstanceOf(CourseNotFoundException.class);
+    }
+
+    @Test
+    void findAllReturnsPagedResults() {
+        var courses = List.of(
+                CourseEntity.builder()
+                        .id(UUID.fromString("11111111-0000-0000-0000-000000000101"))
+                        .title("Introducción a Java")
+                        .description("Curso publicado.")
+                        .price(new BigDecimal("50.00"))
+                        .status(CourseStatus.PUBLISHED)
+                        .build(),
+                CourseEntity.builder()
+                        .id(UUID.fromString("11111111-0000-0000-0000-000000000102"))
+                        .title("Spring Boot")
+                        .description("Curso de Spring.")
+                        .price(new BigDecimal("79.99"))
+                        .status(CourseStatus.DRAFT)
+                        .build());
+
+        var pageable = PageRequest.of(0, 10);
+        var page = new PageImpl<>(courses, pageable, courses.size());
+        when(courseRepository.findAll(pageable)).thenReturn(page);
+
+        var result = courseService.findAll(pageable);
+
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent().get(0).title()).isEqualTo("Introducción a Java");
+        assertThat(result.getContent().get(1).title()).isEqualTo("Spring Boot");
+        assertThat(result.getNumber()).isZero();
+        assertThat(result.getSize()).isEqualTo(10);
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getTotalPages()).isEqualTo(1);
     }
 }
