@@ -1,0 +1,33 @@
+server:
+  port: ${API_GATEWAY_PORT:8080}
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: course-service
+              uri: lb://course-service
+              predicates:
+                - Path=/courses/**
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/users/**
+            - id: enrollment-service
+              uri: lb://enrollment-service
+              predicates:
+                - Path=/enrollments/**
+            - id: content-service
+              uri: lb://content-service
+              predicates:
+                - Path=/contents/**
+            - id: notification-service
+              uri: lb://notification-service
+              predicates:
+                - Path=/notifications/**
+            - id: payment-service
+              uri: lb://payment-service
+              predicates:
+                - Path=/payments/**

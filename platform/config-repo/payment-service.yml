@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: ${PAYMENT_DB_URL:jdbc:postgresql://localhost:15432/payment}
+    username: ${PAYMENT_DB_USER:payment}
+    password: ${PAYMENT_DB_PASSWORD:payment_pass}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  sql:
+    init:
+      mode: never
+
+server:
+  port: ${PAYMENT_SERVICE_PORT:8083}
+
+payments:
+  simulation:
+    header-enabled: ${PAYMENT_SIMULATION_HEADER_ENABLED:true}

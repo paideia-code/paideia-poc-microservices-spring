@@ -9,7 +9,6 @@
 tools/
 documentacion/
 features/
-platform/
 infrastructure/k8s/
 infrastructure/terraform/
 infrastructure/argocd/

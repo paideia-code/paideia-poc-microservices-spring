@@ -1,0 +1,296 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ─── Capa 0: Todo ───
+    {
+      "label": "0. ENTORNO · up (docker)",
+      "dependsOn": [
+        "1. PERSISTENCIA · up (docker)",
+        "2. OBSERVABILIDAD · up (docker)",
+        "3. SEGURIDAD · up (docker)",
+        "4. PLATAFORMA · up (docker)",
+        "5. NEGOCIO · up (docker)"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "0. ENTORNO · up (docker + mvn)",
+      "dependsOn": [
+        "1. PERSISTENCIA · up (docker)",
+        "2. OBSERVABILIDAD · up (docker)",
+        "3. SEGURIDAD · up (docker)",
+        "4. PLATAFORMA · up (mvn)",
+        "5. NEGOCIO · up (mvn)"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    // ─── Capa 1: Persistencia ───
+    {
+      "label": "1. PERSISTENCIA · up (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml up -d postgres mongo",
+      "problemMatcher": []
+    },
+    // ─── Capa 2: Observabilidad ───
+    {
+      "label": "2. OBSERVABILIDAD · up (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml up -d otel-lgtm",
+      "problemMatcher": []
+    },
+    // ─── Capa 3: Seguridad ───
+    {
+      "label": "3. SEGURIDAD · up (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml up -d keycloak; powershell -NoProfile -Command 'foreach($i in 1..60){ try { $r = Invoke-WebRequest -Uri \"http://localhost:8090/realms/paideia/.well-known/openid-configuration\" -UseBasicParsing -TimeoutSec 2; if ($r.StatusCode -eq 200) { Write-Host \"KEYCLOAK READY\"; exit 0 } } catch {}; Start-Sleep -Seconds 2 }; Write-Host \"ERROR: Keycloak no respondio en 120s\"; exit 1'",
+      "problemMatcher": []
+    },
+
+    // ─── Capa 4: Plataforma ───
+    // ─── docker ───
+    {
+      "label": "4. PLATAFORMA · up (docker)",
+      "dependsOn": ["config-server (docker)", "discovery (docker)", "api-gateway (docker)"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "config-server (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile platform up -d config-server",
+      "problemMatcher": []
+    },
+    {
+      "label": "discovery (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile platform up -d discovery",
+      "problemMatcher": []
+    },
+    {
+      "label": "api-gateway (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile platform up -d api-gateway",
+      "problemMatcher": []
+    },
+    // ─── mvn ───
+    {
+      "label": "4. PLATAFORMA · up (mvn)",
+      "dependsOn": ["config-server (mvn)", "discovery (mvn)", "api-gateway (mvn)"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "config-server (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl platform/config-server",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-config",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "discovery (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl platform/discovery",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-discovery",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "api-gateway (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl platform/api-gateway",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-gateway",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+
+
+    // ─── Capa 5: Negocio ───
+    // ─── docker ───
+    {
+      "label": "5. NEGOCIO · up (docker)",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile apps --profile platform up -d",
+      "problemMatcher": []
+    },
+    // ─── mvn ───
+    {
+      "label": "5. NEGOCIO · up (mvn)",
+      "dependsOn": ["course-service (mvn)", "user-service (mvn)", "payment-service (mvn)", "notification-service (mvn)", "enrollment-service (mvn)", "content-service (mvn)"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "course-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/course-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-course",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "user-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/user-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-user",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "enrollment-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/enrollment-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-enrollment",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "payment-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/payment-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-payment",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "notification-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/notification-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-notification",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "content-service (mvn)",
+      "type": "shell",
+      "command": ".\\mvnw.cmd spring-boot:run -pl services/content-service",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "spring-boot-content",
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Starting \\S*Application.*$",
+          "endsPattern": "^.*(Started \\S+Application|Tomcat started on port).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    // ─── BUILD ───
+    {
+      "label": "DOCKER · build all",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile apps --profile platform build",
+      "problemMatcher": []
+    },
+    // ─── DOWN ───
+    {
+      "label": "DOWN DOCKER COMPOSE",
+      "type": "shell",
+      "command": "docker compose -f docker/compose.yml --profile apps --profile platform down",
+      "problemMatcher": []
+    }
+  ]
+}

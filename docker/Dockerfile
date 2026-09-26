@@ -1,8 +1,4 @@
 # syntax=docker/dockerfile:1
-# Dockerfile genérico para los servicios del monorepo.
-# Uso directo: docker build --build-arg MODULE=services/course-service -t paideia/course-service .
-# En docker compose se pasa el ARG por servicio (perfil "full").
-ARG MODULE=services/course-service
 
 # --- Stage 1: compilación con Maven ---
 FROM eclipse-temurin:21-jdk AS builder

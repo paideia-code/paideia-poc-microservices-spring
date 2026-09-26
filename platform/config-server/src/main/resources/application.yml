@@ -1,11 +1,13 @@
 spring:
   application:
     name: config-server
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        git:
-          uri: ${CONFIG_REPO_URI:file:///C:/paideia/workspace/paideia-poc-microservices-spring/platform/config-repo}
+        native:
+          search-locations: ${SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS:file:../config-repo}
 
 server:
   port: 8888

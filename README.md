@@ -198,3 +198,85 @@ flowchart LR
 | ArgoCD           | última compatible (Docker) | GitOps                                               |
 | Terraform        | 1.7+                       | Infrastructure as Code                               |
 | GitHub Actions   | nativa                     | CI/CD pipeline                                       |
+
+## Ejecución local
+
+### Prerrequisitos
+
+- Docker Desktop con Docker Compose v2.
+- Java 21 para el modo Maven/híbrido.
+- Copiar y completar `docker/.env.example` como `docker/.env`.
+- Puertos disponibles: `3000`, `4317`, `4318`, `8080–8086`, `8090`, `8761`, `8888`, `9090`, `15432` y `27017`.
+- Docker Desktop debe estar ejecutándose.
+- No es necesario instalar Maven: el proyecto incluye su wrapper: `mvnw`/`mvnw.cmd`.
+- VS Code es opcional; solo se necesita para levantar con la opción 3.
+
+### Opción 1: Docker completo
+
+```powershell
+# Levantar todo el sistema
+docker compose -f docker/compose.yml --profile platform --profile apps up -d
+
+# Construir todas las imágenes
+docker compose -f docker/compose.yml --profile platform --profile apps build
+
+# Detener los contenedores
+docker compose -f docker/compose.yml down
+```
+
+### Opción 2: Docker + Maven
+- Primero levantar la infraestructura:
+```powershell
+docker compose -f docker/compose.yml up -d postgres mongo otel-lgtm keycloak
+```
+
+- Después iniciar la plataforma con Maven:
+```powershell
+.\mvnw.cmd spring-boot:run -pl platform/config-server
+.\mvnw.cmd spring-boot:run -pl platform/discovery
+.\mvnw.cmd spring-boot:run -pl platform/api-gateway
+```
+
+- Finalmente iniciar los servicios de negocio con Maven:
+```powershell
+.\mvnw.cmd spring-boot:run -pl services/course-service
+.\mvnw.cmd spring-boot:run -pl services/enrollment-service
+.\mvnw.cmd spring-boot:run -pl services/payment-service
+.\mvnw.cmd spring-boot:run -pl services/user-service
+.\mvnw.cmd spring-boot:run -pl services/content-service
+.\mvnw.cmd spring-boot:run -pl services/notification-service
+```
+
+- Los procesos Maven deben ejecutarse en terminales separadas.
+
+### Opción 3: Tasks VS Code
+
+Abrir:
+
+```text
+Terminal → Run Task
+```
+
+#### Docker completo
+
+```text
+0. ENTORNO · up (docker)
+```
+
+#### Docker + Maven
+
+```text
+0. ENTORNO · up (docker + mvn)
+```
+
+#### Reconstruir imágenes
+
+```text
+DOCKER · build all
+```
+
+#### Detener contenedores
+
+```text
+DOWN DOCKER COMPOSE
+```
