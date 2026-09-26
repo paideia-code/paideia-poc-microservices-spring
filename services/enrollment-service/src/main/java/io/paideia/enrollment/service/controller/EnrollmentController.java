@@ -55,7 +55,7 @@ public class EnrollmentController {
             @RequestHeader(value = PAYMENT_SIMULATION_HEADER, required = false) String paymentSimulation,
             @Valid @RequestBody EnrollmentRequestDTO dto) {
 
-        EnrollmentResponseDTO response = enrollmentService.enroll(UUID.fromString(jwt.getSubject()), paymentSimulation, dto);
+        EnrollmentResponseDTO response = enrollmentService.enroll(UUID.fromString(jwt.getSubject()), jwt.getClaimAsString("email"), paymentSimulation, dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(response.id()).toUri();
         return ResponseEntity.created(location).body(response);
     }

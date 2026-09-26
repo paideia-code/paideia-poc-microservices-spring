@@ -1,5 +1,6 @@
 package io.paideia.enrollment.service.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.paideia.enrollment.service.client.CourseClient;
-import io.paideia.enrollment.service.client.NotificationClient;
 import io.paideia.enrollment.service.client.PaymentClient;
 import io.paideia.enrollment.service.client.dto.CourseClientDTO;
-import io.paideia.enrollment.service.client.dto.NotificationClientRequestDTO;
 import io.paideia.enrollment.service.client.dto.PaymentClientRequestDTO;
 import io.paideia.enrollment.service.client.dto.PaymentClientResponseDTO;
 import io.paideia.enrollment.service.controller.dto.EnrollmentAccessResponseDTO;
@@ -22,6 +21,8 @@ import io.paideia.enrollment.service.exception.custom.EnrollmentAlreadyExistsExc
 import io.paideia.enrollment.service.exception.custom.EnrollmentNotFoundException;
 import io.paideia.enrollment.service.model.entity.EnrollmentEntity;
 import io.paideia.enrollment.service.model.repository.EnrollmentRepository;
+import io.paideia.enrollment.service.service.events.EnrollmentCreatedEvent;
+import io.paideia.enrollment.service.service.events.EnrollmentEventPublisher;
 import io.paideia.enrollment.service.service.mapper.EnrollmentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class EnrollmentService {
     private final EnrollmentMapper enrollmentMapper;
     private final CourseClient courseClient;
     private final PaymentClient paymentClient;
-    private final NotificationClient notificationClient;
+    private final EnrollmentEventPublisher enrollmentEventPublisher;
 
     @Transactional(readOnly = true)
     public EnrollmentResponseDTO findById(UUID id) {
@@ -57,7 +58,7 @@ public class EnrollmentService {
     }
 
     @Transactional
-    public EnrollmentResponseDTO enroll(UUID studentId, String paymentSimulation, EnrollmentRequestDTO dto) {
+    public EnrollmentResponseDTO enroll(UUID studentId, String email, String paymentSimulation, EnrollmentRequestDTO dto) {
         /* Preconditions */
         CourseClientDTO course = courseClient.findById(dto.courseId());
         if (!"PUBLISHED".equals(course.status())) {
@@ -89,7 +90,12 @@ public class EnrollmentService {
         /* Notifications */
         String notifType = status == EnrollmentStatus.ENROLLED ? "ENROLLMENT_CONFIRMED" : "ENROLLMENT_REJECTED";
         String notifSubject = status == EnrollmentStatus.ENROLLED ? "Inscripcion confirmada" : "Inscripcion rechazada";
-        notificationClient.notify(new NotificationClientRequestDTO(notifType, notifSubject, "Tu inscripcion en el curso " + course.title() + " fue procesada."));
+
+        // Crear EnrollmentCreatedEvent
+        EnrollmentCreatedEvent event = new EnrollmentCreatedEvent(UUID.randomUUID(), Instant.now(), saved.getId(), studentId, saved.getCourseId(), course.title(), saved.getStatus().name(), notifType, notifSubject, "Tu inscripción en el curso " + course.title() + " fue procesada.", email);
+
+        // º Publicar evento
+        enrollmentEventPublisher.publish(event);
 
         return enrollmentMapper.toResponse(saved);
     }

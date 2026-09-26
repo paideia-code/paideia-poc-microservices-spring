@@ -40,18 +40,4 @@ public class RestClientConfig {
                 .build();
     }
 
-    @Bean
-    RestClient notificationServiceClient(@Value("${clients.notification-service.url}") String notificationServiceUrl, RestClient.Builder restClientBuilder) {
-        return restClientBuilder
-                .clone()
-                .baseUrl(notificationServiceUrl)
-                .requestInterceptor((request, body, execution) -> {
-                    var auth = SecurityContextHolder.getContext().getAuthentication();
-                    if (auth instanceof JwtAuthenticationToken jwtAuth) {
-                        request.getHeaders().setBearerAuth(jwtAuth.getToken().getTokenValue());
-                    }
-                    return execution.execute(request, body);
-                })
-                .build();
-    }
 }

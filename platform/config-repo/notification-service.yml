@@ -24,6 +24,19 @@ spring:
           auth: true
           starttls:
             enable: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:notification-service}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        "[spring.deserializer.key.delegate.class]": org.apache.kafka.common.serialization.StringDeserializer
+        "[spring.deserializer.value.delegate.class]": org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+        "[spring.json.value.default.type]": io.paideia.notification.service.service.events.EnrollmentCreatedEvent
+        "[spring.json.trusted.packages]": io.paideia.events
+        "[spring.json.use.type.headers]": false
 
 server:
   port: ${NOTIFICATION_SERVICE_PORT:8086}
