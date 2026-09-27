@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: discovery
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    # El servidor NO debe registrarse a sí mismo ni cachear el registro
+    register-with-eureka: false
+    fetch-registry: false

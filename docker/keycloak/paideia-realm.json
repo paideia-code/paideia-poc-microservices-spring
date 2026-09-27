@@ -1,0 +1,64 @@
+{
+  "realm": "paideia",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "verifyEmail": false,
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      { "name": "STUDENT" },
+      { "name": "ADMIN" },
+      { "name": "offline_access", "description": "${role_offline-access}" },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}"
+      },
+      {
+        "name": "default-roles-paideia",
+        "description": "Roles automáticos para todo usuario nuevo",
+        "composite": true,
+        "clientRole": false,
+        "composites": {
+          "realm": ["offline_access", "uma_authorization", "STUDENT"]
+        }
+      }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-paideia",
+    "composite": true,
+    "clientRole": false
+  },
+  "clients": [
+    {
+      "clientId": "paideia-api",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:*"],
+      "webOrigins": ["*"],
+      "defaultClientScopes": ["profile", "email", "roles", "basic"]
+    }
+  ],
+  "users": [
+    {
+      "username": "student01",
+      "firstName": "Student01",
+      "lastName": "Demo",
+      "enabled": true,
+      "email": "student01@paideia.local",
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "student01",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["STUDENT"]
+    }
+  ]
+}

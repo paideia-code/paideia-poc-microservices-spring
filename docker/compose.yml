@@ -1,0 +1,390 @@
+name: paideia-poc-microservices-spring
+
+services:
+
+  # ─── Capa 1: Persistencia ───
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${POSTGRES_PORT:-15432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - net
+
+  mongo:
+    image: mongo:8
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - net
+
+
+  # ─── Capa 2: Observabilidad
+  otel-lgtm:
+    image: grafana/otel-lgtm:0.33.0
+    ports:
+      - "3000:3000" # Grafana
+      - "4317:4317"
+      - "4318:4318" # OpenTelemetry - HTTP
+      - "9090:9090" # Prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/otel-lgtm/prometheus.yaml:ro
+      - ./grafana/dashboards:/otel-lgtm/grafana/conf/provisioning/dashboards/paideia:ro
+      - ./grafana/dashboards-provisioning.yml:/otel-lgtm/grafana/conf/provisioning/dashboards/paideia.yaml:ro
+      - otel_lgtm_data:/data
+    networks:
+      - net
+
+
+  # ─── Capa 3: Seguridad ───
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/paideia-realm.json:/opt/keycloak/data/import/paideia-realm.json:ro
+    ports:
+      - "${KEYCLOAK_PORT:-8090}:8080"
+    networks:
+      - net
+
+
+  # ─── Capa 4: Plataforma ───
+  config-server:
+    profiles: ["platform"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: platform/config-server
+    container_name: config-server
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8888
+      SPRING_PROFILES_ACTIVE: native
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+    volumes:
+      - ../platform/config-repo:/config-repo:ro
+    ports:
+      - "8888:8888"
+    networks:
+      - net
+
+  discovery:
+    profiles: ["platform"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: platform/discovery
+    container_name: discovery
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    networks:
+      - net
+
+  api-gateway:
+    profiles: ["platform"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: platform/api-gateway
+    container_name: api-gateway
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8080
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery:8761/eureka
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+    ports:
+      - "8080:8080"
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+    networks:
+      - net
+
+
+  # ─── Capa 5: Negocio ───
+  course-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/course-service
+    container_name: course-service
+    restart: unless-stopped
+    environment:
+      COURSE_DB_URL: jdbc:postgresql://postgres:5432/course
+      COURSE_DB_USER: ${COURSE_DB_USER:-course}
+      COURSE_DB_PASSWORD: ${COURSE_DB_PASSWORD:-course_pass}
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+    networks:
+      - net
+
+  payment-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/payment-service
+    container_name: payment-service
+    restart: unless-stopped
+    environment:
+      PAYMENT_DB_URL: jdbc:postgresql://postgres:5432/payment
+      PAYMENT_DB_USER: ${PAYMENT_DB_USER:-payment}
+      PAYMENT_DB_PASSWORD: ${PAYMENT_DB_PASSWORD:-payment_pass}
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+    networks:
+      - net
+
+  notification-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/notification-service
+    container_name: notification-service
+    restart: unless-stopped
+    environment:
+      NOTIFICATION_DB_URL: jdbc:postgresql://postgres:5432/notification
+      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER:-notification}
+      NOTIFICATION_DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-notification_pass}
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    ports:
+      - "8086:8086"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+    networks:
+      - net
+
+  enrollment-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/enrollment-service
+    container_name: enrollment-service
+    restart: unless-stopped
+    environment:
+      ENROLLMENT_DB_URL: jdbc:postgresql://postgres:5432/enrollment
+      ENROLLMENT_DB_USER: ${ENROLLMENT_DB_USER:-enrollment}
+      ENROLLMENT_DB_PASSWORD: ${ENROLLMENT_DB_PASSWORD:-enrollment_pass}
+      CONFIG_SERVER_URL: http://config-server:8888
+      COURSE_SERVICE_URL: http://course-service:8081
+      PAYMENT_SERVICE_URL: http://payment-service:8083
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+      course-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    networks:
+      - net
+
+
+  user-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/user-service
+    container_name: user-service
+    restart: unless-stopped
+    environment:
+      USER_DB_URL: jdbc:postgresql://postgres:5432/users
+      USER_DB_USER: ${USER_DB_USER:-users}
+      USER_DB_PASSWORD: ${USER_DB_PASSWORD:-users_pass}
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+    networks:
+      - net
+
+  content-service:
+    profiles: ["apps"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        MODULE: services/content-service
+    container_name: content-service
+    restart: unless-stopped
+    environment:
+      CONTENT_MONGODB_URI: mongodb://mongo:27017/content
+      CONTENT_SERVICE_PORT: 8085
+      CONTENT_SEED_ENABLED: ${CONTENT_SEED_ENABLED:-true}
+      CONFIG_SERVER_URL: http://config-server:8888
+      ENROLLMENT_SERVICE_URL: http://enrollment-service:8082
+      EUREKA_URL: http://discovery:8761/eureka
+      KEYCLOAK_ISSUER: http://localhost:8090/realms/paideia
+      KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8090/realms/paideia/protocol/openid-connect/certs
+      OTEL_TRACES_ENDPOINT: http://otel-lgtm:4318/v1/traces
+      OTEL_LOGS_ENDPOINT: http://otel-lgtm:4318/v1/logs
+    ports:
+      - "8085:8085"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      discovery:
+        condition: service_started
+      enrollment-service:
+        condition: service_started
+    networks:
+      - net
+
+  kafka:
+    image: apache/kafka:4.3.1
+    container_name: kafka
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 1
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+    networks:
+      - net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: unless-stopped
+    ports:
+      - "8087:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - net      
+
+volumes:
+  postgres_data:
+  mongo_data:
+  otel_lgtm_data:
+  keycloak_data:
+  kafka_data:
+
+networks:
+  net:
+    driver: bridge

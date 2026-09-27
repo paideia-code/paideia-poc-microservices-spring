@@ -1,0 +1,1622 @@
+{
+  "info": {
+    "_postman_id": "0dad2cf9-ce40-487a-b2f8-1d1fd2c00cf9",
+    "name": "paideia-poc-microservices-spring",
+    "description": "Postman collection for v1/minimal. Infrastructure runs with Docker Compose; business services run on localhost ports 8081-8086.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24972309"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "token (student01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_student\", pm.response.json().access_token);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"refresh_token_student\", pm.response.json().refresh_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "paideia-api",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username_student01}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password_student01}}",
+                  "type": "text",
+                  "uuid": "31901d73-ca0b-41aa-a13d-7a879ffab546"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/paideia/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "paideia",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "token (student02)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_student\", pm.response.json().access_token);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"refresh_token_student\", pm.response.json().refresh_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "paideia-api",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username_student02}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password_student02}}",
+                  "type": "text",
+                  "uuid": "31901d73-ca0b-41aa-a13d-7a879ffab546"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/paideia/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "paideia",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "token (admin01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_admin\", pm.response.json().access_token);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"refresh_token_admin\", pm.response.json().refresh_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "paideia-api",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username_admin01}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password_admin01}}",
+                  "type": "text",
+                  "uuid": "31901d73-ca0b-41aa-a13d-7a879ffab546"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/paideia/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "paideia",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "token (admin02)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_admin\", pm.response.json().access_token);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"refresh_token_admin\", pm.response.json().refresh_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "paideia-api",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username_admin02}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password_admin02}}",
+                  "type": "text",
+                  "uuid": "31901d73-ca0b-41aa-a13d-7a879ffab546"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/paideia/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "paideia",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "token (admin keycloak)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_admin_keycloak\", pm.response.json().access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "admin-cli",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username_admin_keycloak}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password_admin_keycloak}}",
+                  "type": "text",
+                  "uuid": "31901d73-ca0b-41aa-a13d-7a879ffab546"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/master/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "master",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh token (student)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token_student\", pm.response.json().access_token);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"refresh_token_student\", pm.response.json().refresh_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "refresh_token",
+                  "type": "text",
+                  "uuid": "04ed799d-7fe7-4e1a-9400-98aae4f40b75"
+                },
+                {
+                  "key": "client_id",
+                  "value": "paideia-api",
+                  "type": "text",
+                  "uuid": "8b4a43ad-c8d7-486b-951a-e347cc32a464"
+                },
+                {
+                  "key": "refresh_token",
+                  "value": "{{refresh_token_student}}",
+                  "type": "text",
+                  "uuid": "79516d3b-65d6-43e6-a81c-ae651b0ea3f3"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/realms/paideia/protocol/openid-connect/token",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "realms",
+                "paideia",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sign up",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin_keycloak}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n     \"username\": \"student01\",\r\n     \"email\": \"student01@test.io\",\r\n     \"firstName\": \"Student\",\r\n     \"lastName\": \"01\",\r\n     \"enabled\": true\r\n   }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/admin/realms/paideia/users",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "admin",
+                "realms",
+                "paideia",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin_keycloak}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\": \"password\",\r\n    \"value\": \"student01\",\r\n    \"temporary\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url_base_keycloak}}/admin/realms/paideia/users/9122cfd9-3caf-4b98-a866-11262efd3020/reset-password",
+              "host": [
+                "{{url_base_keycloak}}"
+              ],
+              "path": [
+                "admin",
+                "realms",
+                "paideia",
+                "users",
+                "9122cfd9-3caf-4b98-a866-11262efd3020",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "noauth"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Gateway",
+      "item": [
+        {
+          "name": "actuator/health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/actuator/health",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "actuator/metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/actuator/metrics",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "actuator",
+                "metrics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "actuator/prometheus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/actuator/prometheus",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "actuator",
+                "prometheus"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "course-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/actuator/health",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "enrollment-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{enrollment_service_url}}/actuator/health",
+              "host": [
+                "{{enrollment_service_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{payment_service_url}}/actuator/health",
+              "host": [
+                "{{payment_service_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{user_service_url}}/actuator/health",
+              "host": [
+                "{{user_service_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "content-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_service_url}}/actuator/health",
+              "host": [
+                "{{content_service_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "notification-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{notification_service_url}}/actuator/health",
+              "host": [
+                "{{notification_service_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/actuator/gateway/routes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "actuator",
+                "gateway",
+                "routes"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Spring Actuator health endpoints for all v1 services."
+    },
+    {
+      "name": "Course Service",
+      "item": [
+        {
+          "name": "Actuator",
+          "item": [
+            {
+              "name": "actuator/health",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "localhost:8081/actuator/health",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "actuator/metrics",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "localhost:8081/actuator/metrics",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "metrics"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "actuator/prometheus",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "localhost:8081/actuator/prometheus",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "prometheus"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "courses",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/courses",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "courses"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "courses/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/courses/{{test_uuid}}2",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "courses",
+                "{{test_uuid}}2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "courses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Draft Course\",\n  \"description\": \"Curso temporal creado desde Postman.\",\n  \"price\": 89.99,\n  \"status\": \"DRAFT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url_base}}/courses",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Course catalog. Source of truth for course price and publication status.",
+      "auth": {
+        "type": "noauth"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enrollment Service",
+      "item": [
+        {
+          "name": "enrollments/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/enrollments/237a145b-4b84-4390-b000-240ba96c1add",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "enrollments",
+                "237a145b-4b84-4390-b000-240ba96c1add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "enrollments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Payment-Simulation",
+                "value": "REJECTED",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"{{test_uuid}}1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url_base}}/enrollments",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "enrollments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "enrollments/access",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/enrollments/access?courseId={{test_uuid}}6",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "enrollments",
+                "access"
+              ],
+              "query": [
+                {
+                  "key": "courseId",
+                  "value": "{{test_uuid}}6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "enrollments/me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/enrollments/me",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "enrollments",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Orchestrates enrollment: course validation, payment processing, notification, and content access check.",
+      "auth": {
+        "type": "noauth"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Service",
+      "item": [
+        {
+          "name": "payments/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/payments/c49796b7-b2ac-4aae-af50-de320f35fd14",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "payments",
+                "c49796b7-b2ac-4aae-af50-de320f35fd14"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Payment-Simulation",
+                "value": "REJECTED",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 149.99\n}"
+            },
+            "url": {
+              "raw": "{{url_base}}/payments",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Simulated payment processing. Amounts >= 10000 are rejected."
+    },
+    {
+      "name": "User Service",
+      "item": [
+        {
+          "name": "users/{id}",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const suffix = Date.now();",
+                  "pm.environment.set(\"run_suffix\", suffix);",
+                  "pm.environment.set(\"test_user_email\", `qa-student-${suffix}@paideia.io`);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response is successful\", function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.environment.set(\"test_student_id\", json.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{test_user_email}}\",\n  \"name\": \"QA Student {{run_suffix}}\"\n}"
+            },
+            "url": {
+              "raw": "{{url_base}}/users/9122cfd9-3caf-4b98-a866-11262efd3020",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "users",
+                "9122cfd9-3caf-4b98-a866-11262efd3020"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/users/me",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n    \"displayName\": \"Admin 01\"\r\n }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url_base}}/users/me",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Simple student registration and lookup."
+    },
+    {
+      "name": "Content Service",
+      "item": [
+        {
+          "name": "contents",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Student-Id",
+                "value": "{{test_student_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{url_base}}/contents?courseId={{test_uuid}}3",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "contents"
+              ],
+              "query": [
+                {
+                  "key": "courseId",
+                  "value": "{{test_uuid}}3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "contents/{id}/file",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/contents/bd221c6c-85fc-4b32-9072-01ec7fea3929/file",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "contents",
+                "bd221c6c-85fc-4b32-9072-01ec7fea3929",
+                "file"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "contents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "courseId",
+                  "value": "{{test_uuid}}2",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Material introductorio del curso.",
+                  "type": "text"
+                },
+                {
+                  "key": "metadata",
+                  "value": "{\"kind\":\"syllabus\",\"pages\":12}",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/C:/Users/sim/Downloads/guia-observabilidad-spring-boot-4.md"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{url_base}}/contents",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "contents"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Content records and purchased-content access."
+    },
+    {
+      "name": "Notification Service",
+      "item": [
+        {
+          "name": "notifications/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url_base}}/notifications/5ee56930-43c2-4fc2-95aa-6b8fb4e9b0b6",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "notifications",
+                "5ee56930-43c2-4fc2-95aa-6b8fb4e9b0b6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_student}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recipientId\": \"9122cfd9-3caf-4b98-a866-11262efd3020\",\n    \"type\": \"ENROLLMENT_CONFIRMED\",\n    \"subject\": \"Inscripcion confirmada\",\n    \"body\": \"Te has inscrito correctamente en el curso.\"\n}"
+            },
+            "url": {
+              "raw": "{{url_base}}/notifications",
+              "host": [
+                "{{url_base}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Persists notification requests. In v4 this becomes a Kafka consumer."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "url_base",
+      "value": ""
+    },
+    {
+      "key": "url_base_keycloak",
+      "value": ""
+    },
+    {
+      "key": "username_admin_keycloak",
+      "value": ""
+    },
+    {
+      "key": "password_admin_keycloak",
+      "value": ""
+    },
+    {
+      "key": "token_admin_keycloak",
+      "value": ""
+    },
+    {
+      "key": "username_admin01",
+      "value": ""
+    },
+    {
+      "key": "password_admin01",
+      "value": ""
+    },
+    {
+      "key": "username_admin02",
+      "value": ""
+    },
+    {
+      "key": "password_admin02",
+      "value": ""
+    },
+    {
+      "key": "token_admin",
+      "value": ""
+    },
+    {
+      "key": "refresh_token_admin",
+      "value": ""
+    },
+    {
+      "key": "username_student01",
+      "value": ""
+    },
+    {
+      "key": "password_student01",
+      "value": ""
+    },
+    {
+      "key": "username_student02",
+      "value": ""
+    },
+    {
+      "key": "password_student02",
+      "value": ""
+    },
+    {
+      "key": "token_student",
+      "value": ""
+    },
+    {
+      "key": "refresh_token_student",
+      "value": ""
+    },
+    {
+      "key": "test_uuid",
+      "value": ""
+    }
+  ]
+}

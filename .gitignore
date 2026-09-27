@@ -1,12 +1,11 @@
 target/
 .m2/
 .env
+*.log
 !.env.example
 !.mvn/wrapper/maven-wrapper.jar
 .idea/
-.vscode/
+.vscode/settings.json
 *.iml
-*.log
-scripts/local/.run/
-scripts/local/logs/
 .DS_Store
+.opencode

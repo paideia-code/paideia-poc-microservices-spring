@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: Paideia Dashboards
+    orgId: 1
+    folder: Paideia
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /otel-lgtm/grafana/conf/provisioning/dashboards/paideia
+      foldersFromFilesStructure: true
